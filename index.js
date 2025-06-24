@@ -1,3 +1,3 @@
-import parseFile from './src/parse.js';
+import genDiff from './src/parse.js';
 
-export default parseFile;
+export default genDiff;
