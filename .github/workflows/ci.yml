@@ -1,7 +1,10 @@
 name: CI
 
 on:
-  - push
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -13,11 +16,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+
       - run: make install
       - run: make lint
-      #- run: make test
+      - run: make test
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
