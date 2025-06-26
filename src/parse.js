@@ -1,10 +1,18 @@
 import fs from 'fs';
-import * as path from 'path';
+import path from 'path';
 import _ from 'lodash';
+import yaml from 'js-yaml';
 
 const fileParseJson = (filepath) => {
   const readFile = fs.readFileSync(path.resolve(process.cwd(), filepath));
-  return JSON.parse(readFile);
+  const fileExtension = path.extname(filepath);
+  if (fileExtension === '.json') {
+    return JSON.parse(readFile);
+  } else if (fileExtension === '.yaml') {
+    return yaml.load(readFile);
+  } else if (fileExtension === '.yml') {
+    return yaml.load(readFile);
+  }
 };
 
 export default (filepath1, filepath2) => {
@@ -12,7 +20,8 @@ export default (filepath1, filepath2) => {
   const file2 = fileParseJson(filepath2);
   const keys1 = Object.keys(file1);
   const keys2 = Object.keys(file2);
-  const sortedKeys = _.union(keys1, keys2).sort();
+  const unionKeys = _.union(keys1, keys2);
+  const sortedKeys = _.sortBy(unionKeys);
 
   return (
     sortedKeys.reduce((acc, key) => {
