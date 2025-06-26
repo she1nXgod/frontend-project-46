@@ -1,23 +1,9 @@
-import fs from 'fs';
-import path from 'path';
 import _ from 'lodash';
-import yaml from 'js-yaml';
-
-const fileParseJson = (filepath) => {
-  const readFile = fs.readFileSync(path.resolve(process.cwd(), filepath));
-  const fileExtension = path.extname(filepath);
-  if (fileExtension === '.json') {
-    return JSON.parse(readFile);
-  } else if (fileExtension === '.yaml') {
-    return yaml.load(readFile);
-  } else if (fileExtension === '.yml') {
-    return yaml.load(readFile);
-  }
-};
+import fileParser from './parsers.js';
 
 export default (filepath1, filepath2) => {
-  const file1 = fileParseJson(filepath1);
-  const file2 = fileParseJson(filepath2);
+  const file1 = fileParser(filepath1);
+  const file2 = fileParser(filepath2);
   const keys1 = Object.keys(file1);
   const keys2 = Object.keys(file2);
   const unionKeys = _.union(keys1, keys2);
