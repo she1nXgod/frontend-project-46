@@ -5,37 +5,34 @@ const getBracketIndent = (depth) => ' '.repeat((depth - 1) * 4);
 
 const stringify = (value, depth) => {
   if (!_.isPlainObject(value)) return String(value);
-  const lines = Object.entries(value).map(
+
+  const entries = Object.entries(value).map(
     ([key, val]) => `${getIndent(depth + 1)}${key}: ${stringify(val, depth + 1)}`
   );
 
-  return `{\n${lines.join('\n')}\n${getBracketIndent(depth + 1)}}`;
+  return `{\n${entries.join('\n')}\n${getBracketIndent(depth + 1)}}`;
 };
 
-const buildStylish = (obj1, obj2, depth = 1) => {
-  const keys = _.sortBy(_.union(Object.keys(obj1), Object.keys(obj2)));
-
-  const lines = keys.flatMap((key) => {
-    const val1 = obj1[key];
-    const val2 = obj2[key];
-
-    if (!Object.hasOwn(obj1, key)) {
-      return `${getIndent(depth, '+')}${key}: ${stringify(val2, depth)}`;
+const buildStylish = (tree, depth = 1) => {
+  const lines = tree.flatMap((node) => {
+    const { key, type, value, oldValue, newValue, children } = node;
+    switch (type) {
+      case 'added':
+        return `${getIndent(depth, '+')}${key}: ${stringify(value, depth)}`;
+      case 'removed':
+        return `${getIndent(depth, '-')}${key}: ${stringify(value, depth)}`;
+      case 'unchanged':
+        return `${getIndent(depth)}${key}: ${stringify(value, depth)}`;
+      case 'updated':
+        return [
+          `${getIndent(depth, '-')}${key}: ${stringify(oldValue, depth)}`,
+          `${getIndent(depth, '+')}${key}: ${stringify(newValue, depth)}`,
+        ];
+      case 'nested':
+        return `${getIndent(depth)}${key}: ${buildStylish(children, depth + 1)}`;
+      default:
+        throw new Error(`Unknown node type: '${type}'`);
     }
-    if (!Object.hasOwn(obj2, key)) {
-      return `${getIndent(depth, '-')}${key}: ${stringify(val1, depth)}`;
-    }
-    if (_.isPlainObject(val1) && _.isPlainObject(val2)) {
-      return `${getIndent(depth)}${key}: ${buildStylish(val1, val2, depth + 1)}`;
-    }
-    if (!_.isEqual(val1, val2)) {
-      return [
-        `${getIndent(depth, '-')}${key}: ${stringify(val1, depth)}`,
-        `${getIndent(depth, '+')}${key}: ${stringify(val2, depth)}`,
-      ];
-    }
-
-    return `${getIndent(depth)}${key}: ${stringify(val1, depth)}`;
   });
 
   return `{\n${lines.join('\n')}\n${getBracketIndent(depth)}}`;
