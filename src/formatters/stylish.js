@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 const getIndent = (depth, symbol = ' ') => `${' '.repeat(depth * 4 - 2)}${symbol} `
-const getBracketIndent = (depth) => ' '.repeat((depth - 1) * 4)
+const getBracketIndent = depth => ' '.repeat((depth - 1) * 4)
 
 const stringify = (value, depth) => {
   if (!_.isPlainObject(value)) return String(value)
