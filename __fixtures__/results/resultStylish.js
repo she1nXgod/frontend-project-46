@@ -41,6 +41,6 @@ const resultPlain = `{
         }
         fee: 100500
     }
-}`;
+}`
 
-export default resultPlain;
+export default resultPlain

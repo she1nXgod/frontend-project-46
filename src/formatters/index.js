@@ -1,16 +1,16 @@
-import buildStylish from './stylish.js';
-import buildPlain from './plain.js';
-import buildJson from './json.js';
+import buildStylish from './stylish.js'
+import buildPlain from './plain.js'
+import buildJson from './json.js'
 
 export default (tree, format) => {
   switch (format) {
     case 'stylish':
-      return buildStylish(tree);
+      return buildStylish(tree)
     case 'plain':
-      return buildPlain(tree);
+      return buildPlain(tree)
     case 'json':
-      return buildJson(tree);
+      return buildJson(tree)
     default:
-      throw new Error(`Unsupported format '${format}`);
+      throw new Error(`Unsupported format '${format}`)
   }
-};
+}
